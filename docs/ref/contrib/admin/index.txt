@@ -1909,6 +1909,17 @@ name, which can be anything you like. This argument becomes the prefix to the
 URL names for the purposes of :ref:`reversing them<admin-reverse-urls>`. This
 is only necessary if you are using more than one ``AdminSite``.
 
+Pre-populating fields in admin sites
+------------------------------------
+To pre-populate values for the fields of an admin site, simply append the 
+value to the URL as GET parameters with the name of the field as key, e.g.::
+
+    /admin/model/add/?forename=John&surname=Doe
+    
+Related fields can also be pre-populated::
+
+    /admin/modelname/add/?surname=Doe&relatedfieldvalue=2
+
 Adding views to admin sites
 ---------------------------
 

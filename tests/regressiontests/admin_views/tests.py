@@ -572,6 +572,26 @@ class AdminViewBasicTest(TestCase):
             self.client.get("/test_admin/admin/admin_views/inquisition/?leader__name=Palin&leader__age=27")
         except SuspiciousOperation:
             self.fail("Filters should be allowed if they are defined on a ForeignKey pointing to this model")
+    
+    def test_field_prepopulation(self):
+        """
+        Regression test for #9739
+        Tests the prepopulation of fields within the admin site.
+        """
+        # prepare some sections
+        section_0 = Section.objects.create(name='Section 1')
+        section_1 = Section.objects.create(name='Section 2')
+        section_2 = Section.objects.create(name='Section 3')
+        # call the addition page for articles
+        response = self.client.get('/test_admin/' + self.urlbit + '/admin_views/article/add/?title=Testtitle&content=Lorem%20Ipsum&date=2011-06-01,18:21:53&section=2')
+        self.assertEqual(response.status_code, 200)
+        # test if the prepopulated values are within the response and in the correct fields
+        self.assertRegexpMatches(response.content, r'<input (?=.*name="title")(?=.*value="Testtitle").* />')
+        self.assertRegexpMatches(response.content, r'<textarea (?=.*name="content").*>Lorem Ipsum</textarea>')
+        self.assertRegexpMatches(response.content, r'<input (?=.*name="date_0")(?=.*value="2011-06-01").* />')
+        self.assertRegexpMatches(response.content, r'<input (?=.*name="date_1")(?=.*value="18:21:53").* />')
+        self.assertRegexpMatches(response.content, r'<option (?=.*value="2")(?=.*selected="selected").*>Section object</option>')
+        
 
 class AdminJavaScriptTest(AdminViewBasicTest):
     urls = "regressiontests.admin_views.urls"

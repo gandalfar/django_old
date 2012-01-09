@@ -967,6 +967,8 @@ class ModelAdmin(BaseModelAdmin):
                     continue
                 if isinstance(f, models.ManyToManyField):
                     initial[k] = initial[k].split(",")
+                if isinstance(f, models.DateTimeField): 
+                    initial[k] = initial[k].split(",") 
             form = ModelForm(initial=initial)
             prefixes = {}
             for FormSet, inline in zip(self.get_formsets(request), inline_instances):
